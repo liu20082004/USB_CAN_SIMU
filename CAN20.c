@@ -471,3 +471,14 @@ void replace_35XX_recvCmd( CAN20_CommandStruct* cmdStruct , uint16 offset , uint
 	memcpy( cmdStruct->CommandData+3 , _35XX_eeprom+offset+subOffset , 4 ) ;
 }
 
+void timeOut_Function()
+{
+	/*超时后重新初始化计算变量*/
+	recvFrameCount = 0 ;  //帧计数
+	recvFrameLen = 0 ;  //帧长度
+	recvTatolFrame = 0 ;  //总帧数
+	isSendNext = 0 ;  //是否等待接收FC帧
+	sendFrameCount = 0 ;  //帧计数
+	sendFrameLen = 0 ;  //帧长度
+	sendTatolFrame = 0 ;  //总帧数
+}

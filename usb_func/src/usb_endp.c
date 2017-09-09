@@ -30,8 +30,8 @@ extern uint8_t  USB_Tx_State;
 extern uint8_t RX_data[8]  ;
 #define VCOMPORT_IN_FRAME_INTERVAL             5
 extern enum {CAN_disable = 0, CAN_enable = !CAN_disable} CAN_STATUS;
-extern CAN1_RX ;
-extern CAN_doing ;
+extern int CAN1_RX ;
+extern int CAN_doing ;
 //extern u8 CAN_statment	   ;
 
 

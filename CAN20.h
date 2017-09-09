@@ -61,7 +61,7 @@ uint32 CheckCANStdId( uint32 StdId );
 uint16 CAN20_SendCommand_V2( CAN20_CommandStruct cmdStruct );
 uint16 get_35XX_eeprom_offset( const uint8* recvBuf );
 void replace_35XX_recvCmd( CAN20_CommandStruct* cmdStruct , uint16 offset , uint8 subOffset );
-
+void timeOut_Function();
 
 #ifdef __cplusplus
 }

@@ -4,6 +4,8 @@
  * 实验平台：STM32神舟开发板
  * 标准库  ：STM32F10x_StdPeriph_Driver V3.5.0
  * 作者    ：www.armjishu.com
+ * 移植修改说明: 
+ * 需要优化的地方: 1).优化程序结构,使之模块化; 2).模拟数据可动态修改,可接受PC端实时修改; 3).CAN中断需要优化,中断内只处理存数操作,其他的功能放到中断外部
 **********************************************************************************/
 
 /* Includes ------------------------------------------------------------------*/
@@ -14,6 +16,7 @@
 #include "hw_config.h"
 #include "usb_pwr.h"
 //#include "CAN20.h"
+//#include "tim_clock.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -66,8 +69,8 @@ int main(void)
        */
     
 	u8 i,j ;
-	CanTxMsg TxMessage;
-	TxMessage.StdId = 0x7F0 ;
+	//CanTxMsg TxMessage;
+	//TxMessage.StdId = 0x7F0 ;
 	user_statment=NONE ;	
 
 	/* 初始化板载LED指示灯 */
@@ -92,7 +95,7 @@ int main(void)
 	SZ_STM32_LEDOff(LED2);
 	SZ_STM32_LEDOff(LED3);
 	SZ_STM32_LEDOff(LED4);
-
+	TIM5_Init();
 	
 	while (1)
 	{
@@ -413,7 +416,7 @@ void CAN_Config(void)
 {
   CAN_InitTypeDef        CAN_InitStructure;
   CAN_FilterInitTypeDef  CAN_FilterInitStructure;
-  uint16_t ih=0xffff,il=0xffff,jh=0xffff,jl=0xffff;
+  //uint16_t ih=0xffff,il=0xffff,jh=0xffff,jl=0xffff;
 
   /* CAN register init */
   CAN_DeInit(CAN1);
@@ -508,7 +511,8 @@ uint8_t CAN_Uesr_Config(uint8_t *pbuf)							   ///SETCAN1
   CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 0;					 ///CAN_FilterFIFO设定了指向过滤器的FIFO（0或1）
   CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;				 ///CAN_FilterActivation使能或者失能过滤器。该参数可取的值为ENABLE或者DISABLE。
   CAN_FilterInit(&CAN_FilterInitStructure);
-
+	
+  return 0 ;
 
 };
 

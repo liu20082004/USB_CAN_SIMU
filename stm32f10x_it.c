@@ -26,7 +26,7 @@ uint8_t  USB_Tx_State = 0;
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-extern USB_Rx_Cnt ;
+extern int USB_Rx_Cnt ;
 extern uint8_t USB_Rx_Buffer[];
 extern enum USER_statment {
                     NONE,
@@ -261,39 +261,41 @@ void Hex_to_Char (uint32_t value , uint8_t *pbuf , uint8_t len)       		   ///例
 
 void CAN2_RX0_IRQHandler(void)
 {
-  int i;
-  CanRxMsg RxMessage ;
-  CanTxMsg TxMessage;
-  CAN_Receive(CAN2, CAN_FIFO0, &RxMessage);
-  
-//  switch(RxMessage.StdId)
-//  {
-//   	case 0x7e0:	TxMessage.StdId=0x7e8 ;
-//				break ;
-//   	case 0x241:	TxMessage.StdId=0x641 ;
-//				break ;
-//   	case 0x101:	TxMessage.StdId=0x7df ;
-//				break ;
-//	//大众4代
-//   	case 0x714:	TxMessage.StdId=0x77e ;
-//				break ;
-//	case 0x711:	TxMessage.StdId=0x77b ;
-//				break ;
-//
-//  }
-//  for (i=0;i<8;i++)
-//  {
-//	TxMessage.Data[i]=RxMessage.Data[i] ;
-//  }
-//  TxMessage.Data[1]+=0x40 ;
-//  TxMessage.DLC=RxMessage.DLC ;
-//  
-//  CAN_Transmit(CAN2, &TxMessage)	 ;
+  	int i;
+  	CanRxMsg RxMessage ;
+  	CanTxMsg TxMessage;
+  	CAN_Receive(CAN2, CAN_FIFO0, &RxMessage);
+
+	
+	TIM_Cmd(TIM5, DISABLE);  //暂停定时器
+	// 点亮LED3
+	LED3OBB = 0;
+
+
 
 	RxMessage_CAN = RxMessage ;
-	//user_statment = CAN_rece ;
-	//simu_CAN20();
 	simu_CAN20_V2();
+
+	// 熄灭LED3
+	LED3OBB = 1;
+	
+	TIM5->CNT = 0 ;
+	TIM_Cmd(TIM5, ENABLE);  //启动定时器
+
+	//填充USB_Rx_Buffer,USB_Rx_Cnt,并使user_statment=CAN_rece,usb转串口就会把数据上传PC.具体机制还不是很清除
+
+//	Hex_to_Char(RxMessage.StdId, &USB_Rx_Buffer[0], 8) ;                        ///标准帧ID
+//  	for (i=0;i<RxMessage.DLC;i++)                                                 ///数据域长度
+//  	{
+//    	Hex_to_Char(((uint32_t)RxMessage.Data[i]<<24), &USB_Rx_Buffer[15+i*3], 2) ; ///数据域(注:数据域中Data为uint8_t,在强行转换为uint32_t后左移28位,便于Hex_to_Char处理)
+//    	//Hex_to_Char(RxMessage.Data[i], &USB_Rx_Buffer[15+i*3], 2);    编译通过,试试这样处理是否可行
+//    	USB_Rx_Buffer[15+i*3+2]=' ';
+//  	}
+//  
+//  	USB_Rx_Buffer[15+i*3+2]='\n';
+//  	USB_Rx_Cnt =15+i*3+2+1;
+//	user_statment = CAN_rece ;
+	
   
 //  
 //  USB_Tx_State =0;
